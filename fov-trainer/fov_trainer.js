@@ -33,14 +33,6 @@ window.addEventListener('load', function () {
 fontSizeDiv.addEventListener('input', function () {
     leftNumberDiv.style.fontSize = parseInt(fontSizeDiv.value) + 'px';
     rightNumberDiv.style.fontSize = parseInt(fontSizeDiv.value) + 'px';
-    if (parseInt(scoreDiv.innerText) === 0) {
-        return;
-    }
-
-    const currentGap = parseInt(getComputedStyle(gameArea).getPropertyValue('gap'));
-    const distanceModifier = parseFloat(document.querySelector('#distance').value);
-    scoreDiv.innerText = currentGap + 5*distanceModifier;
-    console.log(scoreDiv.innerText);
 })
 
 checkButton.addEventListener('click', function () {
