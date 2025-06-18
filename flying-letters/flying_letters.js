@@ -64,12 +64,12 @@ function spawnOffscreen(word) {
     return;
 }
 
-
 offscreenWords.forEach(word => {
     spawnOffscreen(word);
 });
 
 const timeline = gsap.timeline({ paused: true });
+const timeline2 = gsap.timeline({ paused: true });
 
 // These should always be equal, but just in case.
 const numOfWords = Math.min(offscreenWords.length, gameTextDiv.children.length)
@@ -82,12 +82,23 @@ for (let i = 0; i < numOfWords; i++) {
 
     const dx = to.left - from.left;
     const dy = to.top - from.top;
+    const duration = 3;
 
+    // Smooth continuous motion over `duration` seconds.
     timeline.to(offscreenWords[i], {
-        x: `+=${dx}`,
-        y: `+=${dy}`,
-        duration: 1,
-    }, 0); // 0 means all animate simultaneously
+        x: `+=${dx * 1.5}`,
+        y: `+=${dy * 1.5}`,
+        duration: duration,
+        ease: "power2.outIn",
+    }, 0); // Start the animation for every word simultaneously.
+
+    // Fade out only in the second half.
+    timeline.to(offscreenWords[i], {
+        opacity: 0,
+        duration: duration/4,
+        ease: "power1.out",
+    }, duration/2); // Start `duration/2` seconds after motion begins.
+
 }
 
 timeline.play();
