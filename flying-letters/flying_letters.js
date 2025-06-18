@@ -9,15 +9,17 @@ let offscreenWords = []
 gameTextDiv.textContent = '';
 gameTextDiv.style.opacity = 0;
 
-phrase.split(' ').forEach(word => {
+const splitByWords = true;
+const splitPhrase = splitByWords ? phrase.split(' ') : phrase.split('');
+
+splitPhrase.forEach(textUnit => {
     const span = document.createElement('span');
-    span.textContent = word;
+    span.textContent = textUnit;
     span.className = 'offscreen word';
-    span.style.position = 'absolute';
     document.body.appendChild(span);
-    gameTextDiv.innerHTML += '<span>' + word + ' </span>';
+    gameTextDiv.innerHTML += `<span>${textUnit}${splitByWords ? ' ' : ''}</span>`;
     offscreenWords.push(span);
-});    
+});
 
 
 function randInt(min, max) {
@@ -82,7 +84,7 @@ for (let i = 0; i < numOfWords; i++) {
 
     const dx = to.left - from.left;
     const dy = to.top - from.top;
-    const duration = 3;
+    const duration = 5;
 
     // Smooth continuous motion over `duration` seconds.
     timeline.to(offscreenWords[i], {
