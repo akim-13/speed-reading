@@ -3,8 +3,21 @@ const startButton = document.querySelector('#start-button');
 const gameArea = document.querySelector('.game-area');
 const gameTextDiv = document.querySelector('#gametext-div');
 
+const fontSizeDiv = document.querySelector('#fontsize');
+const speedDiv = document.querySelector('#speed');
+const splitIntoWordsCheckbox = document.querySelector('#splitIntoWords');
+
+const initialFontSize = parseInt(fontSizeDiv.value) + 'px';
+document.documentElement.style.setProperty('--word-font-size', initialFontSize);
+
+let duration = -speedDiv.value;
+
 // As oppposed to splitting into characters.
-const splitIntoWords = false;
+let splitIntoWords = splitIntoWordsCheckbox.checked;
+
+splitIntoWordsCheckbox.addEventListener('change', () => {
+    splitIntoWords = splitIntoWordsCheckbox.checked;
+});
 
 startButton.addEventListener('click', start);
 
@@ -57,7 +70,6 @@ function animatePhrase(phrase) {
 
         const dx = to.left - from.left;
         const dy = to.top - from.top;
-        const duration = 9;
 
         // Smooth continuous motion over `duration` seconds.
         timeline.to(offscreenWords[i], {
@@ -131,3 +143,12 @@ function spawnOffscreen(word) {
 
     return;
 }
+
+fontSizeDiv.addEventListener('input', () => {
+  const newSize = parseInt(fontSizeDiv.value) + 'px';
+  document.documentElement.style.setProperty('--word-font-size', newSize);
+});
+
+speedDiv.addEventListener('input', () => {
+    duration = parseInt(-speedDiv.value);
+});

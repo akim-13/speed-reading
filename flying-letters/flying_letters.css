@@ -1,3 +1,7 @@
+:root {
+  --word-font-size: 32px;
+}
+
 body {
     font-family: sans-serif;
     display: flex;
@@ -9,10 +13,17 @@ body {
     overflow: hidden;
 }
 
+.filler,
+.controls,
+.settings {
+    flex: 1;
+    font-size: 16px;
+}
+
 .word {
     position: absolute;
     z-index: -1;
-    font-size: 50px;
+    font-size: var(--word-font-size);
 }
 
 .game-area {
@@ -52,10 +63,10 @@ body {
     align-items: center;
 }
 
-.settings {
+.setting {
     margin-bottom: 10px;
     accent-color: rgb(249, 54, 54);
-    width: 100%;
+    width: 70%;
     cursor: pointer;
 }
 
@@ -82,7 +93,7 @@ body {
     height: 15vh;
 }
 
-#apply-button {
+#start-button {
     padding: 5px 15px;
     margin-bottom: 20px;
     font-size: 16px;
