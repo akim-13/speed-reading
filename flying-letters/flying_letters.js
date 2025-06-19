@@ -1,26 +1,92 @@
 const inputBox = document.querySelector('#input-value');
-const applyButton = document.querySelector('#apply-button');
+const startButton = document.querySelector('#start-button');
 const gameArea = document.querySelector('.game-area');
 const gameTextDiv = document.querySelector('#gametext-div');
 
-const phrase = 'Летающие буквы, но на самом деле слова!';
-let offscreenWords = []
+// As oppposed to splitting into characters.
+const splitIntoWords = false;
 
-gameTextDiv.textContent = '';
-gameTextDiv.style.opacity = 0;
+startButton.addEventListener('click', start);
 
-const splitByWords = true;
-const splitPhrase = splitByWords ? phrase.split(' ') : phrase.split('');
+let isAnimationRunning = false;
 
-splitPhrase.forEach(textUnit => {
-    const span = document.createElement('span');
-    span.textContent = textUnit;
-    span.className = 'offscreen word';
-    document.body.appendChild(span);
-    gameTextDiv.innerHTML += `<span>${textUnit}${splitByWords ? ' ' : ''}</span>`;
-    offscreenWords.push(span);
-});
+async function start() {
+    if (isAnimationRunning) return;
 
+    isAnimationRunning = true;
+
+    const text = inputBox.value;
+    const lines = text.split('\n');
+
+    for (const line of lines) {
+        await animatePhrase(line);
+    }
+    
+    isAnimationRunning = false;
+}
+
+function animatePhrase(phrase) {
+    let offscreenWords = []
+
+    gameTextDiv.textContent = '';
+    gameTextDiv.style.opacity = 0;
+
+    const splitPhrase = splitIntoWords ? phrase.split(' ') : phrase.split('');
+
+    splitPhrase.forEach(textUnit => {
+        const span = document.createElement('span');
+        span.textContent = textUnit;
+        span.className = 'offscreen word';
+        document.body.appendChild(span);
+        gameTextDiv.innerHTML += `<span>${textUnit}${splitIntoWords ? ' ' : ''}</span>`;
+        offscreenWords.push(span);
+    });
+
+    offscreenWords.forEach(word => {
+        spawnOffscreen(word);
+    });
+
+    const transparentWords = gameTextDiv.children
+    // These should always be equal, but just in case.
+    const numOfWords = Math.min(offscreenWords.length, transparentWords.length)
+    const timeline = gsap.timeline({ paused: true });
+
+    for (let i = 0; i < numOfWords; i++) {
+        const from = offscreenWords[i].getBoundingClientRect();
+        const to = transparentWords[i].getBoundingClientRect();
+
+        const dx = to.left - from.left;
+        const dy = to.top - from.top;
+        const duration = 9;
+
+        // Smooth continuous motion over `duration` seconds.
+        timeline.to(offscreenWords[i], {
+            x: `+=${dx * 1.5}`,
+            y: `+=${dy * 1.5}`,
+            duration: duration,
+            ease: "power2.outIn",
+        }, 0); // Start the animation for every word simultaneously.
+
+        // Fade out only in the second half.
+        timeline.to(offscreenWords[i], {
+            opacity: 0,
+            duration: duration/3,
+            ease: "power1.out",
+        }, duration/2); // Start `duration/2` seconds after motion begins.
+
+    }
+
+    timeline.play();
+    
+    return new Promise(resolve => {
+        timeline.eventCallback('onComplete', () => {
+            // Clean-up.
+            offscreenWords.forEach(word => document.body.removeChild(word));
+            // Resolve the promise to start the next animation.
+            resolve();
+        });
+    });
+}
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -65,42 +131,3 @@ function spawnOffscreen(word) {
 
     return;
 }
-
-offscreenWords.forEach(word => {
-    spawnOffscreen(word);
-});
-
-const timeline = gsap.timeline({ paused: true });
-const timeline2 = gsap.timeline({ paused: true });
-
-// These should always be equal, but just in case.
-const numOfWords = Math.min(offscreenWords.length, gameTextDiv.children.length)
-const transparentWords = gameTextDiv.children
-
-
-for (let i = 0; i < numOfWords; i++) {
-    const from = offscreenWords[i].getBoundingClientRect();
-    const to = transparentWords[i].getBoundingClientRect();
-
-    const dx = to.left - from.left;
-    const dy = to.top - from.top;
-    const duration = 5;
-
-    // Smooth continuous motion over `duration` seconds.
-    timeline.to(offscreenWords[i], {
-        x: `+=${dx * 1.5}`,
-        y: `+=${dy * 1.5}`,
-        duration: duration,
-        ease: "power2.outIn",
-    }, 0); // Start the animation for every word simultaneously.
-
-    // Fade out only in the second half.
-    timeline.to(offscreenWords[i], {
-        opacity: 0,
-        duration: duration/4,
-        ease: "power1.out",
-    }, duration/2); // Start `duration/2` seconds after motion begins.
-
-}
-
-timeline.play();
