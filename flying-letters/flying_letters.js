@@ -185,4 +185,12 @@ splitIntoWordsCheckbox.addEventListener('change', () => {
 });
 
 
+// Start game on shift+enter.
+document.addEventListener('keydown', event => {
+    if (event.shiftKey && event.key === 'Enter') {
+        event.preventDefault();
+        start();
+    }
+});
+
 startButton.addEventListener('click', start);
