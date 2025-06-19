@@ -1,102 +1,89 @@
 :root {
-  --word-font-size: 32px;
+    --word-font-size: 32px;
 }
 
 body {
+    margin: 0;
+    height: 100vh;
     font-family: sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative; 
-    height: 100vh;
-    margin: 0px;
+    position: relative;
     overflow: hidden;
 }
 
-.filler,
-.controls,
-.settings {
-    flex: 1;
-    font-size: 16px;
+/* Game area where animation happens */
+.game-area {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 75vh;
+    gap: 30px;
+    outline: 3px solid black;
 }
 
+/* Animated word elements */
 .word {
     position: absolute;
     z-index: -1;
     font-size: var(--word-font-size);
 }
 
-.game-area {
-    position: relative;
+.bottom-panel {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    gap: 30px;
     width: 100%;
-    height: 75vh;
-    outline: 3px black solid;
+    background-color: white;
 }
 
-.separator {
-    margin-top: 0;
-    align-items: center;
-    height: 100%;
-    border-left: 3px black dashed;
-}
-
-.number {
-    font-size: 44px;
-    width: 2em;
-    height: 2em;
-    outline: 2px solid red;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-}
-
-.controls {
-    width: 100%;
+/* Controls panel (middle column) */
+.input-text-panel {
     height: 25vh;
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 16px;
 }
 
+/* Right-side settings panel */
+.settings-panel {
+    flex: 1;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Individual setting items */
 .setting {
+    width: 60%;
     margin-bottom: 10px;
     accent-color: rgb(249, 54, 54);
-    width: 70%;
     cursor: pointer;
 }
 
-#score {
-    position:fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    width: 60px;
-    height: 30px;
-    outline: black solid 2px;
-    margin-top: 10px;
-    background-color: white;
-    z-index: 999;
+/* Left-side filler/spacer */
+.filler {
+    flex: 1;
 }
 
+/* Input field */
 #input-value {
-    margin-bottom: 10px; /* Space between input field and button */
-    margin-top: 20px;
+    margin: 20px 0 10px 0;
     padding: 5px;
     font-size: 16px;
     width: 40vw;
     height: 15vh;
 }
 
+/* Start button */
 #start-button {
     padding: 5px 15px;
     margin-bottom: 20px;
     font-size: 16px;
     cursor: pointer;
 }
-
