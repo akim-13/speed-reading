@@ -18,12 +18,20 @@ let duration = -speedDiv.value;
 let isAnimationRunning = false;
 
 async function start() {
-    if (isAnimationRunning) return;
+    const isInputEmpty = inputBox.value.trim() === '';
+
+    if (isAnimationRunning || isInputEmpty) {
+        return;
+    }
 
     isAnimationRunning = true;
 
-    const lines = inputBox.value.split('\n');
-    for (const line of lines) {
+    const cleanedInput = inputBox.value
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line !== '')
+
+    for (const line of cleanedInput) {
         await animatePhrase(line);
     }
     
