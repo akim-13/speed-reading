@@ -93,7 +93,7 @@ function spawnSpansOffscreen(word) {
     const gameAreaWidth = gameArea.getBoundingClientRect().width;
     const gameAreaHeight = gameArea.getBoundingClientRect().height;
 
-    const edge = generateRandomInt(0, 3);
+    const edge = generateRandomIntInRange(0, 3);
     const top = 0;
     const right = 1;
     const bottom = 2;
@@ -104,23 +104,23 @@ function spawnSpansOffscreen(word) {
 
     switch (edge) {
         case top:
-            x = generateRandomInt(-wordWidth, gameAreaWidth+offset);
+            x = generateRandomIntInRange(-wordWidth, gameAreaWidth+offset);
             y = -wordHeight;
             break;
 
         case bottom:
-            x = generateRandomInt(-wordWidth, gameAreaWidth+offset);
+            x = generateRandomIntInRange(-wordWidth, gameAreaWidth+offset);
             y = gameAreaHeight;
             break;
 
         case right:
             x = gameAreaWidth;
-            y = generateRandomInt(-wordHeight, gameAreaHeight+offset);
+            y = generateRandomIntInRange(-wordHeight, gameAreaHeight+offset);
             break;
 
         case left:
             x = -wordWidth;
-            y = generateRandomInt(-wordHeight, gameAreaHeight+offset);
+            y = generateRandomIntInRange(-wordHeight, gameAreaHeight+offset);
             break;
     }
     
@@ -164,7 +164,7 @@ function defineAnimationTimeline(offscreenWords, transparentWords) {
 }
 
 
-function generateRandomInt(min, max) {
+function generateRandomIntInRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 

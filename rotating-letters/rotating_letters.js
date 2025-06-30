@@ -5,6 +5,7 @@ const gameTextDiv = document.querySelector('#gametext-div');
 const fontSizeDiv = document.querySelector('#fontsize');
 const speedDiv = document.querySelector('#speed');
 const splitIntoWordsCheckbox = document.querySelector('#splitIntoWords');
+const delayDiv = document.querySelector('#delay');
 
 
 // Set defatuls.
@@ -13,6 +14,7 @@ document.documentElement.style.setProperty('--word-font-size', initialFontSize);
 // As oppposed to splitting into characters.
 let splitIntoWords = splitIntoWordsCheckbox.checked;
 let duration = -speedDiv.value;
+let delay = delayDiv.value;
 
 let isAnimationRunning = false;
 
@@ -49,10 +51,14 @@ function animatePhrase(phrase) {
     timeline = defineAnimationTimeline(textUnitSpans);
     timeline.play();
     
+    gsap.delayedCall(delay, () => {
+        timeline.progress(1);
+    })
+    
     return new Promise(resolve => {
         timeline.eventCallback('onComplete', () => {
             // Clean-up.
-            gameTextDiv.forEach(word => document.body.removeChild(word));
+            gameTextDiv.textContent = "";
             // Resolve the promise to start the next animation.
             resolve();
         });
@@ -65,14 +71,14 @@ function defineAnimationTimeline(textUnitSpans) {
     
     textUnitSpans.forEach(span => {
         timeline.set(span, {
-            rotation: generateRandomInt(0, 360)
+            rotation: generateRandomIntInRange(0, 360)
         });
         
         timeline.to(span, {
-            rotation: generateRandomInt(0, 1) ? "+=360" : "-=360",
-            duration: Math.random() * duration,
+            rotation: generateRandomIntInRange(0, 1) ? "+=360" : "-=360",
+            duration: generateRandomFloatInRange(0.3, 0.9) * duration,
             ease: "linear",
-            repeat: 3
+            repeat: 9999,  // -1 causes visual glitches for some reason.
         }, 0);
 
     });
@@ -102,8 +108,12 @@ function splitPhraseIntoSpans(phrase) {
 }
 
 
+generateRandomFloatInRange = (min, max) => {
+  return Math.random() * (max - min) + min;
+}
 
-function generateRandomInt(min, max) {
+
+function generateRandomIntInRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -116,6 +126,11 @@ fontSizeDiv.addEventListener('input', () => {
 
 speedDiv.addEventListener('input', () => {
     duration = parseInt(-speedDiv.value);
+});
+
+
+delayDiv.addEventListener('input', () => {
+    delay = parseFloat(delayDiv.value);
 });
 
 
