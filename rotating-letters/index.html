@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="rotating_letters.css" />
+    <script src="dependencies/gsap.min.js"></script>
+    <title>Вращающиеся буквы</title>
+</head>
+
+<body>
+    <div class="game-area">
+        <div class="word" id="gametext-div">Введите текст и нажмите "Готово"</div>
+    </div>
+
+    <div class="bottom-panel">
+        <div class="filler"></div>
+
+        <div class="input-text-panel">
+            <textarea id="input-value" placeholder='Введите текст и нажмите "Готово" или Shift+Enter'></textarea>
+            <button id="start-button">Готово</button>
+        </div>
+
+        <div class="settings-panel">
+            <label for="speed">Скорость:</label>
+            <input class="setting" type="range" min="-19" max="-1" value="-10" step="1" id="speed" />
+
+            <label for="fontsize">Размер шрифта:</label>
+            <input class="setting" type="range" min="30" max="100" value="65" step="1" id="fontsize" />
+
+            <div class="setting" style="display: flex; justify-content: center;">
+                <label for="splitIntoWords">Разбивать по словам:</label>
+                <input type="checkbox" id="splitIntoWords" />
+            </div>
+        </div>
+    </div>
+
+    <script src="rotating_letters.js"></script>
+</body>
+
+</html>
