@@ -1,69 +1,42 @@
-const gameArea = document.querySelector('.game-area');
+import { setFontSize } from "../shared/js/domUtils.js"
+import { startAnimation } from "../shared/js/gameCommon.js"
+import {
+    generateRandomIntInRange,
+    generateRandomFloatInRange
+} from "../shared/js/randomUtils.js";
+import { 
+    setupFontSizeSlider,
+    setupStartKeybind,
+    setupStartButton,
+    bindFloatInput,
+    bindCheckboxInput,
+} from "../shared/js/eventListeners.js";
+
+
 const inputBox = document.querySelector('#input-value');
-const startButton = document.querySelector('#start-button');
+const speedDiv = document.querySelector('#speed');
+const delayDiv = document.querySelector('#delay');
 const gameTextDiv = document.querySelector('#gametext-div');
 const fontSizeDiv = document.querySelector('#fontsize');
-const speedDiv = document.querySelector('#speed');
+const startButton = document.querySelector('#start-button');
 const splitIntoWordsCheckbox = document.querySelector('#splitIntoWords');
-const delayDiv = document.querySelector('#delay');
 
 
-// Set defatuls.
-const initialFontSize = parseInt(fontSizeDiv.value) + 'px';
-document.documentElement.style.setProperty('--word-font-size', initialFontSize);
-// As oppposed to splitting into characters.
+// Set defaults.
+let duration = -parseFloat(speedDiv.value);
+let delay = parseFloat(delayDiv.value);
 let splitIntoWords = splitIntoWordsCheckbox.checked;
-let duration = -speedDiv.value;
-let delay = delayDiv.value;
-
-let isAnimationRunning = false;
-
-async function start() {
-    const isInputEmpty = inputBox.value.trim() === '';
-
-    if (isAnimationRunning || isInputEmpty) {
-        return;
-    }
-
-    isAnimationRunning = true;
-
-    const cleanedInput = inputBox.value
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line !== '')
-
-    for (const line of cleanedInput) {
-        await animatePhrase(line);
-    }
-    
-    isAnimationRunning = false;
-    
-    gameTextDiv.textContent = 'Введите текст и нажмите "Готово"';
-    gameTextDiv.style.opacity = 1;
-}
+setFontSize(parseInt(fontSizeDiv.value));
 
 
-function animatePhrase(phrase) {
-    gameTextDiv.textContent = '';
+const context = {
+    inputElement: inputBox,
+    gameAreaElement: gameTextDiv,
+    isAnimationRunning: false,
+    animationFunction: animatePhrase
+};
 
-    let textUnitSpans = splitPhraseIntoSpans(phrase);
-    
-    timeline = defineAnimationTimeline(textUnitSpans);
-    timeline.play();
-    
-    gsap.delayedCall(delay, () => {
-        timeline.progress(1);
-    })
-    
-    return new Promise(resolve => {
-        timeline.eventCallback('onComplete', () => {
-            // Clean-up.
-            gameTextDiv.textContent = "";
-            // Resolve the promise to start the next animation.
-            resolve();
-        });
-    });
-}
+startAnimation(context);
 
 
 function defineAnimationTimeline(textUnitSpans) {
@@ -84,6 +57,29 @@ function defineAnimationTimeline(textUnitSpans) {
     });
 
     return timeline;
+}
+
+
+function animatePhrase(phrase) {
+    gameTextDiv.textContent = '';
+
+    let textUnitSpans = splitPhraseIntoSpans(phrase);
+    
+    const timeline = defineAnimationTimeline(textUnitSpans);
+    timeline.play();
+    
+    gsap.delayedCall(delay, () => {
+        timeline.progress(1);
+    })
+    
+    return new Promise(resolve => {
+        timeline.eventCallback('onComplete', () => {
+            // Clean-up.
+            gameTextDiv.textContent = "";
+            // Resolve the promise to start the next animation.
+            resolve();
+        });
+    });
 }
 
 
@@ -108,43 +104,22 @@ function splitPhraseIntoSpans(phrase) {
 }
 
 
-generateRandomFloatInRange = (min, max) => {
-  return Math.random() * (max - min) + min;
-}
+// Set up event listeners.
+setupFontSizeSlider(fontSizeDiv);
 
+bindFloatInput(speedDiv, value => {
+    duration = -value;
+});
 
-function generateRandomIntInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+bindFloatInput(delayDiv, value => {
+    delay = value;
+});
 
-
-fontSizeDiv.addEventListener('input', () => {
-  const newSize = parseInt(fontSizeDiv.value) + 'px';
-  document.documentElement.style.setProperty('--word-font-size', newSize);
+bindCheckboxInput(splitIntoWordsCheckbox, isChecked => {
+    splitIntoWords = isChecked;
 });
 
 
-speedDiv.addEventListener('input', () => {
-    duration = parseInt(-speedDiv.value);
-});
-
-
-delayDiv.addEventListener('input', () => {
-    delay = parseFloat(delayDiv.value);
-});
-
-
-splitIntoWordsCheckbox.addEventListener('change', () => {
-    splitIntoWords = splitIntoWordsCheckbox.checked;
-});
-
-
-// Start game on shift+enter.
-document.addEventListener('keydown', event => {
-    if (event.shiftKey && event.key === 'Enter') {
-        event.preventDefault();
-        start();
-    }
-});
-
-startButton.addEventListener('click', start);
+// Start the game on Shift+Enter.
+setupStartKeybind(startAnimation, context);
+setupStartButton(startButton, startAnimation, context);
