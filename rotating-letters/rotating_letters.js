@@ -14,19 +14,19 @@ import {
 
 
 const inputBox = document.querySelector('#input-value');
-const speedDiv = document.querySelector('#speed');
-const delayDiv = document.querySelector('#delay');
+const speedSlider = document.querySelector('#speed');
+const delaySlider = document.querySelector('#delay');
 const gameTextDiv = document.querySelector('#gametext-div');
-const fontSizeDiv = document.querySelector('#fontsize');
 const startButton = document.querySelector('#start-button');
+const fontSizeSlider = document.querySelector('#fontsize');
 const splitIntoWordsCheckbox = document.querySelector('#splitIntoWords');
 
 
 // Set defaults.
-let duration = -parseFloat(speedDiv.value);
-let delay = parseFloat(delayDiv.value);
+let duration = -parseFloat(speedSlider.value);
+let delay = parseFloat(delaySlider.value);
 let splitIntoWords = splitIntoWordsCheckbox.checked;
-setFontSize(parseInt(fontSizeDiv.value));
+setFontSize(parseInt(fontSizeSlider.value));
 
 
 const context = {
@@ -37,27 +37,6 @@ const context = {
 };
 
 startAnimation(context);
-
-
-function defineAnimationTimeline(textUnitSpans) {
-    const timeline = gsap.timeline({ paused: true });
-    
-    textUnitSpans.forEach(span => {
-        timeline.set(span, {
-            rotation: generateRandomIntInRange(0, 360)
-        });
-        
-        timeline.to(span, {
-            rotation: generateRandomIntInRange(0, 1) ? "+=360" : "-=360",
-            duration: generateRandomFloatInRange(0.3, 0.9) * duration,
-            ease: "linear",
-            repeat: 9999,  // -1 causes visual glitches for some reason.
-        }, 0);
-
-    });
-
-    return timeline;
-}
 
 
 function animatePhrase(phrase) {
@@ -83,6 +62,27 @@ function animatePhrase(phrase) {
 }
 
 
+function defineAnimationTimeline(textUnitSpans) {
+    const timeline = gsap.timeline({ paused: true });
+    
+    textUnitSpans.forEach(span => {
+        timeline.set(span, {
+            rotation: generateRandomIntInRange(0, 360)
+        });
+        
+        timeline.to(span, {
+            rotation: generateRandomIntInRange(0, 1) ? "+=360" : "-=360",
+            duration: generateRandomFloatInRange(0.3, 0.9) * duration,
+            ease: "linear",
+            repeat: 9999,  // -1 causes visual glitches for some reason.
+        }, 0);
+
+    });
+
+    return timeline;
+}
+
+
 function splitPhraseIntoSpans(phrase) {
     let spans = [];
 
@@ -92,10 +92,7 @@ function splitPhraseIntoSpans(phrase) {
         if (textUnit === ' ') {
             return;
         }
-        const span = document.createElement('span');
-        span.textContent = textUnit;
-        span.style.marginRight = "0.2em";
-        span.className = 'separate unit';
+        const span = createSpan(textUnit);
         gameTextDiv.appendChild(span);
         spans.push(span);
     });
@@ -104,14 +101,24 @@ function splitPhraseIntoSpans(phrase) {
 }
 
 
-// Set up event listeners.
-setupFontSizeSlider(fontSizeDiv);
+function createSpan(textUnit) {
+    const span = document.createElement('span');
+    span.textContent = textUnit;
+    span.style.marginRight = "0.2em";
+    span.className = 'separate unit';
 
-bindFloatInput(speedDiv, value => {
+    return span
+}
+
+
+// Set up event listeners.
+setupFontSizeSlider(fontSizeSlider);
+
+bindFloatInput(speedSlider, value => {
     duration = -value;
 });
 
-bindFloatInput(delayDiv, value => {
+bindFloatInput(delaySlider, value => {
     delay = value;
 });
 

@@ -1,3 +1,5 @@
+import { disableAndClearTextArea, enableAndResetTextArea } from "./domUtils.js"
+
 export async function startAnimation(context) {
     const {
         inputElement,
@@ -13,7 +15,10 @@ export async function startAnimation(context) {
 
     context.isAnimationRunning = true;
 
-    const cleanedInput = inputElement.value
+    var currentInput = inputElement.value;
+    disableAndClearTextArea(inputElement);
+
+    const cleanedInput = currentInput
         .split('\n')
         .map(line => line.trim())
         .filter(line => line !== '');
@@ -23,6 +28,7 @@ export async function startAnimation(context) {
     }
 
     context.isAnimationRunning = false;
+    enableAndResetTextArea(inputElement, currentInput);
 
     gameAreaElement.textContent = 'Введите текст и нажмите "Готово"';
     gameAreaElement.style.opacity = 1;

@@ -36,3 +36,12 @@ export function bindCheckboxInput(checkbox, callback) {
         callback(checkbox.checked)
     })
 }
+
+export function setupInputBox(inputBox, isAnimationRunning) {
+    inputBox.addEventListener('input', () => {
+        if (isAnimationRunning) {
+            inputBox.disabled = true;
+            inputBox.placeholder = 'Идёт проигрыш анимации...';
+        }
+    });
+}
