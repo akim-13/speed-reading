@@ -1,5 +1,5 @@
 :root {
-    --word-font-size: 32px;
+    --word-font-size: 65px;
 }
 
 body {
@@ -13,15 +13,16 @@ body {
     overflow: hidden;
 }
 
-/* Game area (for rotating/flying games) */
+/* Game area */
 .game-area {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    outline: 3px solid black;
+    height: 75vh;
     gap: 30px;
+    outline: 3px solid black;
 }
 
 .bottom-panel {
@@ -30,6 +31,7 @@ body {
     background-color: white;
 }
 
+/* Middle controls panel */
 .input-text-panel {
     height: 25vh;
     background-color: white;
@@ -39,6 +41,7 @@ body {
     font-size: 16px;
 }
 
+/* Right-side settings panel */
 .settings-panel {
     flex: 1;
     font-size: 16px;
@@ -48,18 +51,20 @@ body {
     margin-top: 20px;
 }
 
-.setting,
-.settings {
+/* Individual setting items */
+.setting {
     width: 60%;
     margin-bottom: 10px;
     accent-color: rgb(249, 54, 54);
     cursor: pointer;
 }
 
+/* Left-side filler/spacer */
 .filler {
     flex: 1;
 }
 
+/* Input field */
 #input-value {
     margin: 20px 0 10px 0;
     padding: 5px;
@@ -68,8 +73,8 @@ body {
     height: 15vh;
 }
 
-#start-button,
-#apply-button {
+/* Start button */
+#start-button {
     padding: 5px 15px;
     margin-bottom: 20px;
     font-size: 16px;

@@ -1,45 +1,40 @@
+import { setFontSize } from "../shared/js/domUtils.js";
+import { startAnimation } from "../shared/js/gameCommon.js";
+import {
+    generateRandomIntInRange,
+} from "../shared/js/randomUtils.js";
+import {
+    setupFontSizeSlider,
+    setupStartKeybind,
+    setupStartButton,
+    bindFloatInput,
+    bindCheckboxInput,
+} from "../shared/js/eventListeners.js";
+
+
 const gameArea = document.querySelector('.game-area');
 const inputBox = document.querySelector('#input-value');
 const startButton = document.querySelector('#start-button');
 const gameTextDiv = document.querySelector('#gametext-div');
-const fontSizeDiv = document.querySelector('#fontsize');
-const speedDiv = document.querySelector('#speed');
+const fontSizeSlider = document.querySelector('#fontsize');
+const speedSlider = document.querySelector('#speed');
 const splitIntoWordsCheckbox = document.querySelector('#splitIntoWords');
 
 
-// Set defatuls.
-const initialFontSize = parseInt(fontSizeDiv.value) + 'px';
-document.documentElement.style.setProperty('--word-font-size', initialFontSize);
-// As oppposed to splitting into characters.
+// Set defaults.
+let duration = -parseFloat(speedSlider.value);
 let splitIntoWords = splitIntoWordsCheckbox.checked;
-let duration = -speedDiv.value;
+setFontSize(parseInt(fontSizeSlider.value));
 
 
-let isAnimationRunning = false;
+const context = {
+    inputElement: inputBox,
+    gameAreaElement: gameTextDiv,
+    isAnimationRunning: false,
+    animationFunction: animatePhrase
+};
 
-async function start() {
-    const isInputEmpty = inputBox.value.trim() === '';
-
-    if (isAnimationRunning || isInputEmpty) {
-        return;
-    }
-
-    isAnimationRunning = true;
-
-    const cleanedInput = inputBox.value
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line !== '')
-
-    for (const line of cleanedInput) {
-        await animatePhrase(line);
-    }
-    
-    isAnimationRunning = false;
-    
-    gameTextDiv.textContent = 'Введите текст и нажмите "Готово"';
-    gameTextDiv.style.opacity = 1;
-}
+startAnimation(context);
 
 
 function animatePhrase(phrase) {
@@ -52,16 +47,14 @@ function animatePhrase(phrase) {
         spawnSpansOffscreen(word);
     });
 
-    const transparentWords = gameTextDiv.children
-    
-    timeline = defineAnimationTimeline(offscreenWords, transparentWords);
+    const transparentWords = gameTextDiv.children;
+
+    const timeline = defineAnimationTimeline(offscreenWords, transparentWords);
     timeline.play();
-    
+
     return new Promise(resolve => {
         timeline.eventCallback('onComplete', () => {
-            // Clean-up.
             offscreenWords.forEach(word => document.body.removeChild(word));
-            // Resolve the promise to start the next animation.
             resolve();
         });
     });
@@ -94,48 +87,37 @@ function spawnSpansOffscreen(word) {
     const gameAreaHeight = gameArea.getBoundingClientRect().height;
 
     const edge = generateRandomIntInRange(0, 3);
-    const top = 0;
-    const right = 1;
-    const bottom = 2;
-    const left = 3;
-
     const offset = 50;
-    let x,y;
+    let x, y;
 
     switch (edge) {
-        case top:
-            x = generateRandomIntInRange(-wordWidth, gameAreaWidth+offset);
+        case 0:
+            x = generateRandomIntInRange(-wordWidth, gameAreaWidth + offset);
             y = -wordHeight;
             break;
-
-        case bottom:
-            x = generateRandomIntInRange(-wordWidth, gameAreaWidth+offset);
+        case 2:
+            x = generateRandomIntInRange(-wordWidth, gameAreaWidth + offset);
             y = gameAreaHeight;
             break;
-
-        case right:
+        case 1:
             x = gameAreaWidth;
-            y = generateRandomIntInRange(-wordHeight, gameAreaHeight+offset);
+            y = generateRandomIntInRange(-wordHeight, gameAreaHeight + offset);
             break;
-
-        case left:
+        case 3:
             x = -wordWidth;
-            y = generateRandomIntInRange(-wordHeight, gameAreaHeight+offset);
+            y = generateRandomIntInRange(-wordHeight, gameAreaHeight + offset);
             break;
     }
-    
-    word.style.left = x + 'px';
-    word.style.top = y + 'px';
 
-    return;
+    word.style.left = `${x}px`;
+    word.style.top = `${y}px`;
 }
 
 
 function defineAnimationTimeline(offscreenWords, transparentWords) {
     const timeline = gsap.timeline({ paused: true });
-    
-    // These should always be equal, but just in case.
-    const numOfWords = Math.min(offscreenWords.length, transparentWords.length)
+
+    const numOfWords = Math.min(offscreenWords.length, transparentWords.length);
 
     for (let i = 0; i < numOfWords; i++) {
         const from = offscreenWords[i].getBoundingClientRect();
@@ -144,53 +126,34 @@ function defineAnimationTimeline(offscreenWords, transparentWords) {
         const dx = to.left - from.left;
         const dy = to.top - from.top;
 
-        // Smooth continuous motion over `duration` seconds.
         timeline.to(offscreenWords[i], {
             x: `+=${dx * 1.5}`,
             y: `+=${dy * 1.5}`,
             duration: duration,
             ease: "power2.outIn",
-        }, 0); // Start the animation for every word simultaneously.
+        }, 0);
 
-        // Fade out only in the second half.
         timeline.to(offscreenWords[i], {
             opacity: 0,
-            duration: duration/3,
+            duration: duration / 3,
             ease: "power1.out",
-        }, duration/2); // Start `duration/2` seconds after motion begins.
+        }, duration / 2);
     }
-    
+
     return timeline;
 }
 
 
-function generateRandomIntInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// Set up event listeners.
+setupFontSizeSlider(fontSizeSlider);
 
-
-fontSizeDiv.addEventListener('input', () => {
-  const newSize = parseInt(fontSizeDiv.value) + 'px';
-  document.documentElement.style.setProperty('--word-font-size', newSize);
+bindFloatInput(speedSlider, value => {
+    duration = -value;
 });
 
-
-speedDiv.addEventListener('input', () => {
-    duration = parseInt(-speedDiv.value);
+bindCheckboxInput(splitIntoWordsCheckbox, isChecked => {
+    splitIntoWords = isChecked;
 });
 
-
-splitIntoWordsCheckbox.addEventListener('change', () => {
-    splitIntoWords = splitIntoWordsCheckbox.checked;
-});
-
-
-// Start game on shift+enter.
-document.addEventListener('keydown', event => {
-    if (event.shiftKey && event.key === 'Enter') {
-        event.preventDefault();
-        start();
-    }
-});
-
-startButton.addEventListener('click', start);
+setupStartKeybind(startAnimation, context);
+setupStartButton(startButton, startAnimation, context);
