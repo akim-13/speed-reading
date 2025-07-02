@@ -1,0 +1,13 @@
+/* Letters rotating in place */
+.separate.unit {
+    display: inline-block;
+    transform-origin: center;
+    font-family: Consolas, monospace;
+    white-space: pre;
+}
+
+.word {
+    position: absolute;
+    z-index: -1;
+    font-size: var(--word-font-size);
+}
