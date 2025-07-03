@@ -37,39 +37,56 @@ startAnimation(context);
 
 function animatePhrase(phrase) {
     gameTextDiv.textContent = '';
-    
-    phraseWithMixedLettersArr = [];
+
+    let phraseWithMixedLettersArr = [];
 
     phrase.split(' ').forEach(word => {
         phraseWithMixedLettersArr.push(mixLetters(word));
     });
 
-    phraseWithMixedLettersStr = phraseWithMixedLettersArr.join(' ');
+    const phraseWithMixedLettersStr = phraseWithMixedLettersArr.join(' ');
 
-    
+    gameTextDiv.textContent = phraseWithMixedLettersStr;
+
     return new Promise(resolve => {
-        timeline.eventCallback('onComplete', () => {
-            // Clean-up.
-            gameTextDiv.textContent = "";
-            // Resolve the promise to start the next animation.
+        setTimeout(() => {
+            gameTextDiv.textContent = '';
             resolve();
-        });
+        }, delay * 1000);
     });
 }
 
 
 function mixLetters(word) {
-    const lettersOnly = word.match(/[a-z]/gi) || [];
+    const isLastCharLetter = /\p{L}/u.test(word.slice(-1));
+    const isWordShufflable = (word.length >= 5) || 
+        (word.length >= 4 && isLastCharLetter);
     
-    if (lettersOnly.length < 4) {
+    if (!isWordShufflable) {
         return word;
     }
     
-    word.split('').forEach((letter, index) => {
-        console.log('TODO');
-    });
+    const shuffleToIndex = isLastCharLetter ? 
+        word.length - 1 :
+        word.length - 2;
     
-    return word
+    const shuffledWord = shuffleFromTo(word.split(''), 1, shuffleToIndex)
+    
+    return shuffledWord.join('');
+}
+
+function shuffleFromTo(arr, start, end) {
+    const before = arr.slice(0, start);
+    const middle = arr.slice(start, end);
+    const after = arr.slice(end);
+
+    // Shuffle middle
+    for (let i = middle.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [middle[i], middle[j]] = [middle[j], middle[i]];
+    }
+
+    return before.concat(middle, after);
 }
 
 
