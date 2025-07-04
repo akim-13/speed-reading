@@ -1,8 +1,4 @@
-.filler {
-    margin: 4rem;
-}
-
-.close-toggle {
+.toggle-sidebar {
   background: none;
   border: none;
   font-size: 2rem;
@@ -14,8 +10,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
-  height: 40px;
+  width: 17.5rem;
+  height: 2.2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -38,12 +34,11 @@
   color: #333;
 }
 
-/* Sidebar styles */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 18.5rem;
   height: 100%;
   background: #fff;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
@@ -56,6 +51,10 @@
 
 .sidebar.open {
   transform: translateX(0);
+}
+
+.sidebar .grid {
+  padding-bottom: 3rem;
 }
 
 .side-filler {
@@ -94,4 +93,8 @@
   padding: 0.5rem;
   font-size: 1rem;
   text-align: center;
+}
+
+#navbar-filler {
+    margin: 4rem;
 }

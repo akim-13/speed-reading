@@ -6,11 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../shared/css/base.css">
     <link rel="stylesheet" href="mixed_letters.css">
+    <link rel="stylesheet" href="../shared/css/navbar.css">
     <script src="../shared/dependencies/gsap.min.js"></script>
     <title>Перемешанные буквы</title>
 </head>
 
 <body>
+    <div class="sidebar-header" id="sidebarHeader">
+        <button class="toggle-sidebar" id="toggleSidebarBtn">☰</button>
+        <h2 id="sidebarTitle"></h2>
+    </div>
+
+    <div id="navbar-container"></div>
+
     <div class="game-area">
         <div class="word" id="gametext-div">Введите текст и нажмите "Готово"</div>
     </div>
@@ -32,6 +40,7 @@
         </div>
     </div>
 
+    <script type="module" src="../shared/js/navbar.js"></script>
     <script type="module" src="mixed_letters.js"></script>
 </body>
 
