@@ -64,6 +64,12 @@ body {
     flex: 1;
 }
 
+.word {
+    position: absolute;
+    z-index: -1;
+    font-size: var(--word-font-size);
+}
+
 /* Input field */
 #input-value {
     margin: 20px 0 10px 0;
