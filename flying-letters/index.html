@@ -6,11 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="flying_letters.css" />
     <link rel="stylesheet" href="../shared/css/base.css">
+    <link rel="stylesheet" href="../shared/css/navbar.css">
     <script src="../shared/dependencies/gsap.min.js"></script>
     <title>Летающие буквы</title>
 </head>
 
 <body>
+    <div class="sidebar-header" id="sidebarHeader">
+        <button class="close-toggle" id="closeSidebarBtn">☰</button>
+        <h2 id="sidebarTitle"></h2>
+    </div>
+    <div id="navbar-container"></div>
+
     <div class="game-area">
         <div class="word" id="gametext-div">Введите текст и нажмите "Готово"</div>
     </div>
@@ -36,6 +43,35 @@
             </div>
         </div>
     </div>
+
+<script>
+  fetch('../shared/html/navbar.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('navbar-container').innerHTML = html;
+    })
+    .then(() => {
+      const toggleBtn = document.getElementById('closeSidebarBtn');
+      const sidebar = document.getElementById('sidebar');
+      const header = document.getElementById('sidebarHeader');
+      const title = document.getElementById('sidebarTitle');
+
+      toggleBtn.addEventListener('click', () => {
+        const isOpen = sidebar.classList.toggle('open');
+
+        if (isOpen) {
+          header.classList.add('active');
+          title.textContent = 'Меню игр';
+          toggleBtn.textContent = '✕';
+        } else {
+          header.classList.remove('active');
+          title.textContent = '';
+          toggleBtn.textContent = '☰';
+        }
+      });
+    })
+    .catch(err => console.error('Error loading navbar:', err));
+</script>
 
     <script type="module" src="flying_letters.js"></script>
 </body>
